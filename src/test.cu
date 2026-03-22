@@ -1,6 +1,6 @@
-#include <Kernels/GEMMSerial.hpp>
-#include <Kernels/GEMMNaive.cuh>
-#include <Kernels/GEMMAligned.cuh>
+#include <Adhoc/GEMMSerial.hpp>
+#include <Adhoc/GEMMNaive.cuh>
+#include <Adhoc/GEMMAligned.cuh>
 #include <Timer.hpp>
 #include <MatrixUtils.hpp>
 

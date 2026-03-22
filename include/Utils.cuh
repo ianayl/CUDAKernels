@@ -4,6 +4,7 @@
 #define UTILS_HPP
 
 #include <cuda.h>
+#include <stdio.h>
 
 // I stole this
 #define cudaCheckErrors(msg) \
