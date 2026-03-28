@@ -11,37 +11,28 @@
 #include <cuda.h>
 #include <memory>
 
-template<typename Kernel, typename... Args>
-__global__ void launchKernel(Args... args) {
-	Kernel::kernel(std::forward<Args>(args)...);
-}
-
 namespace Kernels::Impl {
 
-	class KernelLaunch {
-	protected:
-		// functions are passed in as typename's, where they are actually classes
-	  // we call upon static class functions to run them
-		// - grid/whatever calculation
-		// - kernel
-		template<typename Kernel, typename... Args>
-		static inline Status launch(const Config& conf, const dim3& gridDim,
-																const dim3& blockDim, Args&&... args) {
-			std::unique_ptr<Timer> t;
-			if (conf.timer) t = std::make_unique<Timer>();
-			//Kernel::kernel<<<gridDim, blockDim>>>(std::forward<Args>(args)...);
-			launchKernel<Kernel><<<gridDim, blockDim>>>(std::forward<Args>(args)...);
-			if (conf.timer) t->stop();
-			
-			Status res{};
-			if (conf.timer) {
-				res.timed = true;
-				res.timeNs = t->getNs();
-			}
-			return res;
-		}
+  class KernelLaunch {
+  protected:
+    template<typename F, typename... Args>
+    static inline Status launch(const Config& conf, const F kernel,
+                                const dim3& gridDim, const dim3& blockDim,
+                                Args&&... args) {
+      std::unique_ptr<Timer> t;
+      if (conf.timer) t = std::make_unique<Timer>();
+      kernel<<<gridDim, blockDim>>>(std::forward<Args>(args)...);
+      cudaCheckErrors("Kernel invocation failed");
+      if (conf.timer) t->stop();
 
-	};
+      Status res{};
+      if (conf.timer) {
+        res.timed = true;
+        res.timeNs = t->getNs();
+      }
+      return res;
+    }
+  };
 
 }
 

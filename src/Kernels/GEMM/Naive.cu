@@ -1,34 +1,28 @@
 #include <memory>
 
 #include <Kernels/GEMM/Naive.cuh>
-#include <stdio.h>
 
-__device__ __forceinline__
-void GEMM::Impl::NaiveGEMM::kernel(float *A, float *B, size_t m, size_t n,
-																	 size_t k, float *C) {
-	printf("Hello from the GPU!\n");
+__global__
+void GEMM::Impl::NaiveGEMMKernel(float *A, float *B, size_t m, size_t n,
+                                 size_t k, float *C) {
+  const uint row = blockIdx.x * blockDim.x + threadIdx.x;
+  const uint col = blockIdx.y * blockDim.y + threadIdx.y;
+  if (row >= m || col >= k) return;
+
+  float tmp = 0;
+  for (uint i = 0; i < n; i++) {
+      tmp += A[row * n + i] * B[i * k + col];
+  }
+  C[row * k + col] = tmp;
 }
 
+Status GEMM::Naive::gemm(float *A, float *B, size_t m, size_t n, size_t k,
+                         float *C, const Config& conf) {
+  // GEMM kernel creation / parameter handling here
+  // TODO: use cudaOccupancyMaxwhatever to figure out warp and block sizes instead
 
-Status GEMM::Naive::gemmImpl(const Config& conf, float *A, float *B, size_t m,
-														 size_t n, size_t k, float *C) {
-	// GEMM kernel creation / parameter handling here
-	// TODO: use cudaOccupancyMaxwhatever to figure out warp and block sizes instead
-
-	dim3 gridDim(1);
-	dim3 blockDim(1);
-	return launch<GEMM::Impl::NaiveGEMM>(conf, gridDim, blockDim, A, B, m, n, k, C);
-
-	// std::unique_ptr<Timer> t;
-	// if (conf.timer) t = std::make_unique<Timer>();
-	// // GEMM Kernel execution here
-	// // TODO: just implement the kernel in this file, not much room to play with warps and scheduling and whatnot
-	// if (conf.timer) t->stop();
-	// 
-	// Status res{};
-	// if (conf.timer) {
-	// 	res.timed = true;
-	// 	res.timeNs = t->getNs();
-	// }
-	// return res;
+  dim3 blockDim(32, 32);
+  dim3 gridDim((m + 32 - 1) / 32, (n + 32 - 1) / 32);
+  return launch(conf, GEMM::Impl::NaiveGEMMKernel, gridDim, blockDim,
+                A, B, m, n, k, C);
 }

@@ -4,7 +4,7 @@
 #define CONFIG_HPP
 
 struct Config {
-	bool timer = true;
+  bool timer = true;
 };
 
 inline constexpr Config DefaultKernelConfig{};

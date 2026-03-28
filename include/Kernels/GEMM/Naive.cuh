@@ -6,19 +6,16 @@
 #include <Kernels/GEMM/Impl/GEMMLaunch.cuh>
 
 namespace GEMM {
-	class Naive : public Impl::GEMMLaunch<Naive> { 
-	public:
-		static Status gemmImpl(const Config& conf, float *A, float *B, size_t m,
-													 size_t n, size_t k, float *C);
-	};
+  class Naive : public Impl::GEMMLaunch<Naive> {
+  public:
+    static Status gemm(float *A, float *B, size_t m, size_t n, size_t k,
+                       float *C, const Config& conf = DefaultKernelConfig);
+  };
 
-	namespace Impl {
-		struct NaiveGEMM {
-			__device__ __forceinline__
-			static void kernel(float *A, float *B, size_t m, size_t n, size_t k,
-											   float *C);
-		};
-	}
+  namespace Impl {
+    __global__ void NaiveGEMMKernel(float *A, float *B, size_t m, size_t n,
+                                    size_t k, float *C);
+  }
 }
 
 #endif // KERNELS_GEMM_NAIVE_CUH
