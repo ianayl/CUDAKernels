@@ -5,6 +5,6 @@
 
 I am currently ~~lazy~~ preoccupied with coursework, so haven't written a makefile:
 ```sh
-nvcc -arch=compute_120 src/main.cu -Iinclude src/Timer.cu src/Adhoc/* src/Kernels/GEMM/* src/Kernels/Impl/*
+nvcc -arch=sm_120 src/main.cu -Iinclude src/Timer.cu src/Kernels/GEMM/* src/Tensor.cu
 ```
 Don't forget to change `-arch` and whatnot.
