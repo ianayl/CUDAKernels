@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#ifndef UTILS_CUH
+#define UTILS_CUH
 
 #include <cuda.h>
 #include <stdio.h>
@@ -19,4 +19,4 @@
         } \
     } while (0)
 
-#endif // UTILS_HPP
+#endif // UTILS_CUH

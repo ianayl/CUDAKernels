@@ -19,9 +19,12 @@ namespace Kernels::Impl {
     static inline Status launch(const Config& conf, const F kernel,
                                 const dim3& gridDim, const dim3& blockDim,
                                 Args&&... args) {
+      // TODO: I should wrap the timer/conf code somehow
       std::unique_ptr<Timer> t;
       if (conf.timer) t = std::make_unique<Timer>();
       kernel<<<gridDim, blockDim>>>(std::forward<Args>(args)...);
+      // TODO: implement lookup table for kernel function pointer to string?
+      // these errors are not very helpful.
       cudaCheckErrors("Kernel invocation failed");
       if (conf.timer) t->stop();
 

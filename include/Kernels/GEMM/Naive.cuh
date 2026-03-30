@@ -8,13 +8,15 @@
 namespace GEMM {
   class Naive : public Impl::GEMMLaunch<Naive> {
   public:
-    static Status gemm(float *A, float *B, size_t m, size_t n, size_t k,
-                       float *C, const Config& conf = DefaultKernelConfig);
+    template<typename T>
+    static Status gemm(Tensor<T>& A, Tensor<T>& B, Tensor<T>& C,
+                       const Config& conf = DefaultKernelConfig);
   };
 
   namespace Impl {
-    __global__ void NaiveGEMMKernel(float *A, float *B, size_t m, size_t n,
-                                    size_t k, float *C);
+    template<typename T>
+    __global__ void NaiveGEMMKernel(T* A, T* B, size_t m, size_t n,
+                                    size_t k, T* C);
   }
 }
 
