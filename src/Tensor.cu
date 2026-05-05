@@ -2,6 +2,8 @@
 
 #include <cuda_runtime.h>
 #include <iostream>
+#include <random>
+#include <algorithm>
 
 template<typename T>
 void Tensor<T>::push() {
@@ -61,6 +63,22 @@ void Tensor<T>::print() {
     }
   }
 }
+
+template<typename T>
+Tensor<T> Tensor<T>::random(size_t y, size_t x) {
+  // TODO Do I want to make this multithreaded for large datasets?
+  static std::mt19937 mt{ std::random_device{}() }; // use thread_local?
+  static std::uniform_int_distribution dist{ 0, 20 };
+  std::vector<T> data(y*x);
+  std::generate(data.begin(), data.end(), [&]() { return dist(mt); });
+  return Tensor<T>{y, x, std::move(data)};
+}
+
+template<typename T>
+Tensor<T> Tensor<T>::random(size_t s) {
+  return random(1, s);
+}
+
 
 // Explicit instantiations
 template class Tensor<float>;

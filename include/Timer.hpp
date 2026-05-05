@@ -12,7 +12,7 @@ public:
   Timer(); // Also starts the timer
   Clock::duration stop();
   Clock::duration get();
-  int getNs();
+  int64_t getNs();
 
 private:
   Clock::time_point start;

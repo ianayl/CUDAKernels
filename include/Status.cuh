@@ -9,7 +9,7 @@
 struct Status {
   cudaError_t err = cudaErrorUnknown;
   bool timed = false;
-  int timeNs;
+  int64_t timeNs;
 
   constexpr explicit operator bool() const noexcept {
     return err == cudaSuccess;

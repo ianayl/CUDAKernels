@@ -81,6 +81,10 @@ public:
       dim_x(other.dim_x), dim_y(other.dim_y), dim_z(other.dim_z) { }
   Tensor& operator=(Tensor&& other) noexcept;
 
+  static Tensor random(size_t s);
+  static Tensor random(size_t y, size_t x);
+  static Tensor random(size_t z, size_t y, size_t x);
+
   ~Tensor() {
     if (d_vec) cudaFree(d_vec);
   }
